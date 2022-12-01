@@ -2,6 +2,8 @@ import 'dart:html';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:world_time_app/services/world_time.dart';
+
 import 'dart:convert';
 
 class Loading extends StatefulWidget {
@@ -23,34 +25,47 @@ class _LoadingState extends State<Loading> {
   //   print(data['title']);
   // }
 
-  Future <dynamic> getTime(String api) async {
-    var url = Uri.parse(baseUrl + api);
-    Response response = await client.get(url);
-    Map data = jsonDecode(response.body);
-    // print(data);
+  // Future <dynamic> getTime(String api) async {
+  //   var url = Uri.parse(baseUrl + api);
+  //   Response response = await client.get(url);
+  //   Map data = jsonDecode(response.body);
+  //   // print(data);
+  //
+  //   //Getting The Properties From Data
+  //   String dateTime = data['datetime'];
+  //   String offset = data['utc_offset'].substring(1, 3);
+  //   // print(dateTime);
+  //   // print(offset);
+  //
+  //   //Create A DateTime Object
+  //   DateTime now = DateTime.parse(dateTime);
+  //   now = now.add(Duration(hours: int.parse(offset)));
+  //   print(now);
+  // }
+  String time = 'loading';
 
-    //Getting The Properties From Data
-    String dateTime = data['datetime'];
-    String offset = data['utc_offset'].substring(1, 3);
-    // print(dateTime);
-    // print(offset);
-
-    //Create A DateTime Object
-    DateTime now = DateTime.parse(dateTime);
-    now = now.add(Duration(hours: int.parse(offset)));
-    print(now);
+  void setUpWorldTime() async {
+    WorldTime instance = WorldTime(location: 'Berlin', flag: 'germany.png', url:'Europe/Berlin');
+    await instance.getTime();
+    print(instance.time);
+    setState(() {
+      time=instance.time;
+    });
   }
 
   @override
   void initState() {
     super.initState;
-    getTime('Europe/London');
+    setUpWorldTime();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Text("Loading Screen"),
+      body: Padding(
+        padding: EdgeInsets.all(50),
+        child: Text(time),
+      ),
     );
   }
 }
