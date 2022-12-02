@@ -9,7 +9,7 @@ class WorldTime {
   late String time;
   late String flag;
   late String url;
-
+  late bool isDayTime;
   var client = Client();
 
   WorldTime({required this.location, required this.flag, required this.url});
@@ -31,6 +31,8 @@ class WorldTime {
       DateTime now = DateTime.parse(dateTime);
       print(now);
       now = now.add(Duration(hours: int.parse(offset)));
+
+      isDayTime = now.hour > 6 && now.hour < 20 ? true : false;
 
       //Setting the time property
       this.time = DateFormat.jm().format(now);
