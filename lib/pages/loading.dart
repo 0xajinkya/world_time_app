@@ -3,7 +3,7 @@ import 'dart:html';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:world_time_app/services/world_time.dart';
-
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'dart:convert';
 
 class Loading extends StatefulWidget {
@@ -42,15 +42,20 @@ class _LoadingState extends State<Loading> {
   //   now = now.add(Duration(hours: int.parse(offset)));
   //   print(now);
   // }
-  String time = 'loading';
+  // String time = 'loading';
 
   void setUpWorldTime() async {
     WorldTime instance = WorldTime(location: 'Berlin', flag: 'germany.png', url:'Europe/Berlin');
     await instance.getTime();
     print(instance.time);
-    setState(() {
-      time=instance.time;
+    Navigator.pushReplacementNamed(context, '/home', arguments: {
+      'location': instance.location,
+      'flag': instance.flag,
+      'time': instance.time,
     });
+    // setState(() {
+    //   time=instance.time;
+    // });
   }
 
   @override
@@ -62,10 +67,13 @@ class _LoadingState extends State<Loading> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.all(50),
-        child: Text(time),
-      ),
+      backgroundColor: Colors.black,
+      body: Center(
+        child: SpinKitFadingCube(
+          color: Colors.white,
+          size: 80.0
+        ),
+      )
     );
   }
 }
