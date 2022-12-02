@@ -1,9 +1,9 @@
 import 'package:http/http.dart';
-import'dart:convert';
+import 'dart:convert';
 
 const String baseUrl = 'https://worldtimeapi.org/api/timezone/';
 
-class WorldTime{
+class WorldTime {
   late String location;
   late String time;
   late String flag;
@@ -13,25 +13,29 @@ class WorldTime{
 
   WorldTime({required this.location, required this.flag, required this.url});
 
-  Future <dynamic> getTime() async {
+  Future<dynamic> getTime() async {
+    try {
+      var url = Uri.parse(baseUrl + this.url);
+      Response response = await client.get(url);
+      Map data = jsonDecode(response.body);
+      // print(data);
 
-    var url = Uri.parse(baseUrl + this.url);
-    Response response = await client.get(url);
-    Map data = jsonDecode(response.body);
-    // print(data);
+      //Getting The Properties From Data
+      String dateTime = data['datetime'];
+      String offset = data['utc_offset'].substring(1, 3);
+      // print(dateTime);
+      // print(offset);
 
-    //Getting The Properties From Data
-    String dateTime = data['datetime'];
-    String offset = data['utc_offset'].substring(1, 3);
-    // print(dateTime);
-    // print(offset);
+      //Create A DateTime Object
+      DateTime now = DateTime.parse(dateTime);
+      print(now);
+      now = now.add(Duration(hours: int.parse(offset)));
 
-    //Create A DateTime Object
-    DateTime now = DateTime.parse(dateTime);
-    print(now);
-    now = now.add(Duration(hours: int.parse(offset)));
-
-    //Setting te time property
-    this.time = now.toString();
+      //Setting the time property
+      this.time = now.toString();
+    } catch (e) {
+      print("Caught Some Error $e");
+      this.time = 'Could Not Get Time Data';
+    }
   }
 }
